@@ -1,0 +1,241 @@
+/* ==========================================================================
+   SIMPENA - Penyesuaian tampilan untuk HP / tablet
+   --------------------------------------------------------------------------
+   Dimuat dari layout/header.php setelah style bawaan halaman. Selector diberi
+   prefix "html body" supaya tetap menang atas style desktop yang memakai
+   !important di header.php / sidebar.php maupun di masing-masing view.
+   ========================================================================== */
+
+/* Tombol & latar laci sidebar hanya tampil di layar kecil */
+.mobile-nav-toggle,
+.mobile-nav-backdrop {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    /* ---------------------------------------------------------------
+       1. Sidebar menjadi laci (off-canvas)
+       --------------------------------------------------------------- */
+    html body .main-sidebar,
+    html body.sidebar-minimize .main-sidebar {
+        width: 270px !important;
+        max-width: 84vw;
+        height: 100vh !important;
+        height: 100dvh !important;
+        transform: translateX(-105%);
+        transition: transform .25s ease-in-out !important;
+        z-index: 1200 !important;
+    }
+
+    html body.sidebar-mobile-open .main-sidebar {
+        transform: translateX(0);
+    }
+
+    /* Teks menu yang disembunyikan mode "sidebar-minimize" ditampilkan kembali
+       selama sidebar dipakai sebagai laci. */
+    html body.sidebar-minimize .main-sidebar .sidebar-menu li a > span {
+        display: inline !important;
+    }
+
+    html body.sidebar-minimize .main-sidebar .sidebar-menu li.menu-cepat-header,
+    html body.sidebar-minimize .main-sidebar .sidebar-menu li.header {
+        display: block !important;
+    }
+
+    html body.sidebar-minimize .main-sidebar .logo-sidebar,
+    html body.sidebar-minimize .main-sidebar .menu-cepat-title {
+        display: block !important;
+    }
+
+    html body.sidebar-minimize .main-sidebar .sidebar-menu li a {
+        justify-content: flex-start !important;
+        padding: 10px 18px !important;
+        gap: 12px !important;
+        width: 100% !important;
+    }
+
+    html body.sidebar-minimize .main-sidebar .sidebar-menu li a i {
+        font-size: 16px !important;
+        margin: 0 !important;
+    }
+
+    html body.sidebar-minimize .main-sidebar .sidebar-menu li a > div {
+        justify-content: flex-start !important;
+        width: auto !important;
+    }
+
+    /* ---------------------------------------------------------------
+       2. Konten memakai lebar penuh
+       --------------------------------------------------------------- */
+    html body .content-wrapper,
+    html body.sidebar-minimize .content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    html body .content,
+    html body.sidebar-minimize .content {
+        padding: 0 14px 25px 14px !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html body .main-footer,
+    html body.sidebar-minimize .main-footer {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px !important;
+        text-align: center;
+    }
+
+    /* ---------------------------------------------------------------
+       3. Tombol menu mengambang + latar gelap
+       --------------------------------------------------------------- */
+    html body .mobile-nav-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 1100;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: 12px;
+        background: #1e5fa6;
+        color: #ffffff;
+        font-size: 18px;
+        line-height: 1;
+        box-shadow: 0 6px 16px rgba(30, 95, 166, .35);
+        cursor: pointer;
+    }
+
+    html body .mobile-nav-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, .45);
+        z-index: 1150;
+    }
+
+    html body.sidebar-mobile-open .mobile-nav-backdrop {
+        display: block;
+    }
+
+    html body.sidebar-mobile-open {
+        overflow: hidden;
+    }
+
+    /* ---------------------------------------------------------------
+       4. Navbar atas, banner, kartu, dan tabel
+       --------------------------------------------------------------- */
+    html body .top-navbar {
+        padding: 14px 14px 6px 64px !important;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    html body .top-navbar .search-box {
+        width: 100% !important;
+        padding: 10px 16px;
+    }
+
+    html body .top-navbar .user-profile {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    html body .top-navbar .user-profile img {
+        width: 38px;
+        height: 38px;
+    }
+
+    html body .hero-banner {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+    html body .hero-banner > div {
+        margin-left: 0 !important;
+    }
+
+    html body .hero-banner > div:last-child {
+        width: 100%;
+    }
+
+    html body .hero-banner h2 {
+        font-size: 22px !important;
+        line-height: 1.3;
+    }
+
+    html body .hero-banner img {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    html body .custom-card {
+        padding: 14px !important;
+        border-radius: 16px !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    html body .stat-row {
+        gap: 14px !important;
+    }
+
+    html body .masonry-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Tabel data digeser ke samping, bukan dipaksa mengecil */
+    html body .content table.table-bordered,
+    html body .content table.table-custom {
+        min-width: 620px;
+    }
+
+    /* ---------------------------------------------------------------
+       5. Modal
+       --------------------------------------------------------------- */
+    html body .modal-dialog {
+        margin: 12px;
+    }
+
+    html body .modal-body {
+        max-height: 72vh;
+        overflow-y: auto;
+    }
+}
+
+/* Layar sangat kecil (HP lama / portrait) */
+@media (max-width: 480px) {
+    html body .content,
+    html body.sidebar-minimize .content {
+        padding: 0 10px 20px 10px !important;
+    }
+
+    html body .top-navbar {
+        padding: 12px 10px 4px 60px !important;
+    }
+
+    html body .hero-banner {
+        padding: 16px !important;
+    }
+
+    html body .stat-row {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* Saat dicetak (service report / zebra label) tata letak mobile tidak dipakai */
+@media print {
+    .mobile-nav-toggle,
+    .mobile-nav-backdrop {
+        display: none !important;
+    }
+}

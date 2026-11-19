@@ -1,0 +1,74 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #007bff;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #007bff;
+}
+
+.umroh-card {
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.umroh-card h3 {
+  color: #007bff;
+}
+
+.umroh-card p {
+  line-height: 1.6;
+}
+
+/* Add custom styles for the button */
+.btn-custom {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    border: none;
+}
+
+.btn-custom:hover {
+    background-color: #2980b9;
+}
+
+.btn-custom:focus {
+    outline: none;
+}
+
+/* Position the button at the bottom of "Umroh Prestasi" section */
+.umroh-prestasi-button {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Adjust this value to control the space between the button and the content */
+}
+
+
+footer {
+  background-color: #007bff;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+}

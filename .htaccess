@@ -1,0 +1,32 @@
+# ----------------------------------------------------------------------
+# SIMPENA - pintu masuk singkat
+# ----------------------------------------------------------------------
+# Semua permintaan ke folder ini diteruskan ke folder public/, sehingga
+# aplikasi cukup dibuka lewat:
+#     http://localhost/SIMPENA/          (atau http://<IP-server>/SIMPENA/)
+# tanpa perlu mengetik "/public".
+#
+# Berkas/folder sensitif (app/, vendor/, writable/, .env, *.sql, spark)
+# juga ikut diteruskan ke public/ sehingga tidak bisa diunduh langsung.
+# ----------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # URL berakhiran "/" yang bukan folder dirapikan agar tetap bersih:
+    # /SIMPENA/login/ -> /SIMPENA/login
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} ^(.*?)/+$
+    RewriteRule ^ %1 [R=301,L]
+
+    # Permintaan yang SUDAH menuju folder public/ dibiarkan apa adanya
+    # (index.php serta aset CSS/JS/gambar/font).
+    RewriteRule ^public(/|$) - [L,NC]
+
+    # Sisanya (termasuk "/" dan URL tanpa /public) diteruskan ke public/.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Jangan tampilkan daftar isi folder bila mod_rewrite tidak aktif.
+Options -Indexes
+
