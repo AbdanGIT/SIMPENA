@@ -18,8 +18,8 @@
        --------------------------------------------------------------- */
     html body .main-sidebar,
     html body.sidebar-minimize .main-sidebar {
-        width: 270px !important;
-        max-width: 84vw;
+        width: 300px !important;
+        max-width: 86vw;
         height: 100vh !important;
         height: 100dvh !important;
         transform: translateX(-105%);
@@ -32,13 +32,28 @@
     }
 
     /* Teks menu yang disembunyikan mode "sidebar-minimize" ditampilkan kembali
-       selama sidebar dipakai sebagai laci. */
-    html body.sidebar-minimize .main-sidebar .sidebar-menu li a > span {
+       selama sidebar dipakai sebagai laci. Selector sengaja dibuat lebih
+       spesifik (html body ... section.sidebar ul.sidebar-menu) supaya tetap
+       menang atas aturan !important di header.php, sidebar.php, dan style
+       milik view. Dipakai "a span" (bukan "a > span") agar menu yang teksnya
+       dibungkus <div> (Data Kerusakan, Pencatatan, Riwayat Mutasi, dan
+       Pengadaan) ikut tampil. */
+    html body.sidebar-minimize .main-sidebar section.sidebar ul.sidebar-menu li a span,
+    html body.sidebar-minimize .main-sidebar section.sidebar ul.sidebar-menu li a p {
         display: inline !important;
     }
 
-    html body.sidebar-minimize .main-sidebar .sidebar-menu li.menu-cepat-header,
-    html body.sidebar-minimize .main-sidebar .sidebar-menu li.header {
+    html body.sidebar-minimize .main-sidebar section.sidebar ul.sidebar-menu li a > div,
+    html body.sidebar-minimize .main-sidebar section.sidebar ul.sidebar-menu li a div {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        width: auto !important;
+        height: auto !important;
+    }
+
+    html body.sidebar-minimize .main-sidebar section.sidebar ul.sidebar-menu li.menu-cepat-header,
+    html body.sidebar-minimize .main-sidebar section.sidebar ul.sidebar-menu li.header {
         display: block !important;
     }
 

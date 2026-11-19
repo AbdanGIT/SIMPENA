@@ -207,6 +207,36 @@ Hasil uji: `/SIMPENA/`, `/simpena/`, `/simpena/login`, `/simpena/public/`,
 `/simpena/login/` (301 → `/simpena/login`), `/simpena/dashboard`
 (302 → `/simpena/login`) semuanya benar, termasuk lewat `Host: 10.51.47.129`.
 
+### B18. Foto riwayat mutasi tampil rusak (gambar pecah)
+Kolom `tbl_riwayat_mutasi.foto` tidak selalu berisi gambar. Data hasil impor
+menyimpan **PDF** (`1794903494_f705f90e548ad624f0af.pdf`,
+`1794903844_ed647c1549de17350364.pdf`, `1794904708_a275d775c3137483de8d.pdf`),
+sedangkan `riwayat_mutasi/index.php` selalu merendernya dengan `<img>` sehingga
+yang tampil hanya ikon gambar rusak (paling kentara di tampilan HP).
+**Perbaikan:** view memeriksa ekstensi + keberadaan berkas lewat closure
+`$lampiranMutasi()`:
+- gambar (`jpg/jpeg/png/gif/webp/bmp/avif`) → thumbnail 45×45 yang bisa diklik;
+- PDF / dokumen lain → kartu bertanda **PDF** (atau ekstensi berkas) yang
+  membuka lampiran di tab baru;
+- berkas tidak ada di `public/uploads/inventaris` → tanda `-`, bukan gambar
+  rusak; nama berkas di-`basename()` agar tidak bisa menunjuk ke luar folder.
+Unggahan baru tetap dibatasi gambar (`Berkas::GAMBAR`) pada `pindah_ruangan()`,
+jadi kasus ini hanya terjadi pada data lama.
+
+### B19. Label menu sidebar hilang saat sidebar dalam mode minimize di HP
+`layout/header.php` dan `layout/sidebar.php` menyembunyikan semua `span` menu
+(`body.sidebar-minimize .sidebar-menu span { display: none !important }`) untuk
+mode ikon di desktop. Di HP `mobile.css` hanya mengembalikan `a > span`,
+sedangkan empat menu (**Data Kerusakan, Pencatatan, Riwayat Mutasi, Pengadaan**)
+membungkus labelnya dengan `<div>` sehingga tetap tersembunyi — menunya hanya
+tampil sebagai ikon tanpa tulisan.
+**Perbaikan:** `public/assets/css/mobile.css` (blok `@media (max-width: 991.98px)`)
+memakai selector yang lebih spesifik dan mencakup `span` maupun `p` di dalam
+`section.sidebar ul.sidebar-menu li a`, lalu menormalkan aturan untuk `<div>`
+label (`display: flex`). Lebar laci juga dinaikkan (270px → 300px, maksimal
+86vw) agar label muat satu baris. Hasil uji headless pada 360/390/412px:
+13 item menu (termasuk MENU CEPAT) tampil lengkap dengan teks.
+
 ---
 
 ## C. Hasil pengujian (HTTP, akun uji sementara)
@@ -231,6 +261,7 @@ Hasil uji: `/SIMPENA/`, `/simpena/`, `/simpena/login`, `/simpena/public/`,
 | Arsip upload dokumen + hapus | file tersimpan lalu terhapus |
 | Zebra label, antrian sparepart | simpan/update/hapus OK |
 | PHP di `public/uploads` | 403, gambar tetap 200 |
+| Riwayat mutasi dengan lampiran PDF | tampil kartu **PDF** (bukan gambar rusak) |
 
 ---
 

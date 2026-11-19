@@ -24,6 +24,17 @@
   
   .badge-custom { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block; white-space: nowrap; }
 
+  /* Lampiran yang berupa dokumen (PDF/dll) tidak bisa dipakai di <img>,
+     jadi ditampilkan sebagai kartu tautan. */
+  .lampiran-dokumen {
+    display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; width: 45px; height: 45px; border-radius: 6px; border: 1px solid #ddd;
+    background: #fef2f2; color: #dc2626; text-decoration: none; font-size: 9px; font-weight: 700;
+    letter-spacing: .5px; line-height: 1;
+  }
+  .lampiran-dokumen:hover, .lampiran-dokumen:focus { background: #fee2e2; color: #b91c1c; text-decoration: none; }
+  .lampiran-dokumen i { font-size: 16px; }
+
   /* ==========================================
      PERBAIKAN: KOLOM KETERANGAN AGAR WRAP
      ========================================== */
@@ -40,6 +51,37 @@
       line-height: 1.6;
   }
 </style>
+
+<?php
+/**
+ * Lampiran riwayat mutasi diambil dari kolom `foto` milik barang.
+ * Data lama hasil impor bisa berisi dokumen (mis. PDF), bukan gambar, sehingga
+ * tidak boleh dirender memakai <img> (penyebab gambar rusak di tabel).
+ *
+ * @return array{nama:string,ext:string,jenis:string,url:string,ada:bool}|null
+ */
+$lampiranMutasi = static function (?string $nama): ?array {
+    $nama = trim((string) $nama);
+    if ($nama === '') {
+        return null;
+    }
+
+    // basename() mencegah nama berisi "../" ikut terbaca sebagai path.
+    $nama  = basename($nama);
+    $ext   = strtolower(pathinfo($nama, PATHINFO_EXTENSION));
+    $jenis = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'avif'], true)
+        ? 'gambar'
+        : ($ext === 'pdf' ? 'pdf' : 'dokumen');
+
+    return [
+        'nama'  => $nama,
+        'ext'   => $ext,
+        'jenis' => $jenis,
+        'url'   => base_url('uploads/inventaris/' . rawurlencode($nama)),
+        'ada'   => is_file(FCPATH . 'uploads/inventaris/' . $nama),
+    ];
+};
+?>
 
 <!-- HEADER BANNER -->
 <div class="header-banner">
@@ -96,14 +138,24 @@
             <td><span class="badge-custom" style="background:#ffe3e3; color:#fa5252;"><?= esc($r['ruangan_asal']) ?></span></td>
             <td><span class="badge-custom" style="background:#e6fcf5; color:#20c997;"><?= esc($r['ruangan_tujuan']) ?></span></td>
             
-            <!-- TAMPILKAN GAMBAR -->
+            <!-- TAMPILKAN LAMPIRAN (gambar = thumbnail, PDF/dokumen = kartu tautan) -->
             <td>
-              <?php if (!empty($r['foto'])): ?>
-                <a href="<?= base_url('uploads/inventaris/' . $r['foto']) ?>" target="_blank">
-                  <img src="<?= base_url('uploads/inventaris/' . $r['foto']) ?>" style="height: 45px; width: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
+              <?php $lampiran = $lampiranMutasi($r['foto'] ?? null); ?>
+              <?php if ($lampiran === null): ?>
+                <span style="color: #aaa; font-size: 12px;">-</span>
+              <?php elseif (! $lampiran['ada']): ?>
+                <span style="color: #aaa; font-size: 12px;" title="Berkas lampiran tidak ditemukan di server">-</span>
+              <?php elseif ($lampiran['jenis'] === 'gambar'): ?>
+                <a href="<?= $lampiran['url'] ?>" target="_blank" rel="noopener">
+                  <img src="<?= $lampiran['url'] ?>" alt="Foto <?= esc($r['nama_barang']) ?>" loading="lazy"
+                       style="height: 45px; width: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd;">
                 </a>
               <?php else: ?>
-                <span style="color: #aaa; font-size: 12px;">-</span>
+                <a class="lampiran-dokumen" href="<?= $lampiran['url'] ?>" target="_blank" rel="noopener"
+                   title="Buka lampiran <?= esc(strtoupper($lampiran['ext'] ?: 'berkas')) ?> (<?= esc($lampiran['nama']) ?>)">
+                  <i class="fa <?= $lampiran['jenis'] === 'pdf' ? 'fa-file-pdf-o' : 'fa-file-o' ?>"></i>
+                  <span><?= esc(strtoupper($lampiran['ext'] ?: 'FILE')) ?></span>
+                </a>
               <?php endif; ?>
             </td>
 
