@@ -15,6 +15,47 @@ dideteksi otomatis dari host yang dipakai, jadi tidak perlu diubah manual.
 
 ---
 
+## 0. Mengambil source dari GitHub (clone)
+
+Repo publik: <https://github.com/AbdanGIT/SIMPENA> — branch `main`, tanpa perlu login.
+
+```powershell
+git clone https://github.com/AbdanGIT/SIMPENA.git c:\wamp64\www\SIMPENA
+cd c:\wamp64\www\SIMPENA
+composer install                        # vendor/ tidak disertakan di repo
+Copy-Item .env.example .env             # lalu isi database.default.*
+```
+
+Clone cepat (hanya commit terakhir, tanpa riwayat): tambahkan `--depth 1`.
+
+Setelah clone: lanjut ke [bagian 2](#2-instalasi--memulihkan-database) untuk membuat
+database, lalu buka `http://localhost/SIMPENA/`.
+
+| Ada di repo | Tidak ada (disiapkan sendiri) |
+|---|---|
+| `app/`, `public/` (tanpa `uploads/`), `tests/`, `docs/`, `composer.json`, `composer.lock` | `vendor/` → `composer install` |
+| `.env.example`, `.htaccess`, `spark`, `preload.php` | `.env` → salin dari `.env.example` |
+| `public/assets/` (AdminLTE, Bootstrap, jQuery, JS modul) | `public/uploads/` dan `public/assets/images/` (berkas unggahan) |
+| `docs/*.sql` (skema) | dump data asli `simpena*.sql` (tidak ikut, lihat bagian 2) |
+
+Memperbarui salinan lokal:
+
+```powershell
+cd c:\wamp64\www\SIMPENA
+git pull --rebase
+```
+
+Mengirim perubahan dari PC ini (lihat juga `c:\wamp64\www\github-sync\SYNC.bat`):
+
+```powershell
+git add -A
+git commit -m "Update SIMPENA <tanggal>"
+git push origin main
+```
+
+---
+
+
 ## 1. Kebutuhan server
 
 | Komponen | Versi |
