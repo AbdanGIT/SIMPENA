@@ -178,3 +178,60 @@ skrip di folder unggahan.
 - Dump `simpena*.sql` di root **belum** memuat perbaikan struktur tabel; jalankan
   `docs/schema_fixes.sql` setelah import, atau buat dump baru dari database sehat.
 - Daftar perbaikan kode terbaru: lihat [`docs/PERBAIKAN.md`](docs/PERBAIKAN.md).
+
+---
+
+## 7. Troubleshooting `composer install`
+
+### a) `The zip extension and unzip/7z commands are both missing`
+
+Composer butuh ekstensi PHP `zip` (atau perintah `unzip`/`7z`) untuk membuka
+paket ber-format `dist`. Tanpa itu Composer jatuh ke `--prefer-source`
+(git clone) yang jauh lebih lambat dan bisa meminta login GitHub.
+
+```powershell
+php -v                 # SIMPENA mensyaratkan php ^8.2
+php -m | findstr zip   # harus keluar "zip"
+```
+
+- **WAMP** — pakai PHP 8.3 bawaan WAMP:
+  `c:\wamp64\bin\php\php8.3.28\php.exe C:\composer\composer.phar install`
+- **XAMPP** — buka `C:\xampp\php\php.ini`, hapus `;` pada `;extension=zip`,
+  pastikan `extension_dir = "C:\xampp\php\ext"` dan `ext\php_zip.dll` ada,
+  lalu ulangi `php -m | findstr zip`.
+- Alternatif: instal **7-Zip** (Composer mendeteksi `7z` di PATH).
+
+### b) PHP CLI yang dipanggil bukan versi 8.2+
+
+Di WAMP, `php` pada PATH sering masih PHP 8.0, sehingga Composer menolak
+`"php": "^8.2"`. Paksa memakai PHP 8.3:
+
+```powershell
+c:\wamp64\bin\php\php8.3.28\php.exe C:\composer\composer.phar install --no-interaction
+```
+
+Di PC yang sudah punya `C:\composer\composer83.bat` cukup: `composer83 install`.
+
+### c) Composer minta token / `Authentication required`
+
+Repo ini publik, jadi token **tidak wajib**. Prompt token muncul karena paket
+`codeigniter4/framework` diunduh dari `api.github.com` dan kena **rate limit
+anonim 60 request/jam per IP**. Solusinya buat token sekali lalu simpan global:
+
+1. GitHub → *Settings → Developer settings → Personal access tokens →
+   Fine-grained tokens → Generate new token*.
+2. Repository access: **Public repositories (read-only)** — tanpa scope tambahan.
+3. Simpan:
+
+```powershell
+composer config --global github-oauth.github.com <TOKEN>
+```
+
+Kuota naik ke 5.000 request/jam dan prompt tidak muncul lagi. **Jangan commit token.**
+
+### d) Tetap gagal / mesin tanpa internet
+
+`vendor/` sengaja tidak masuk repo. Salin folder `vendor` hasil `composer install`
+dari PC yang sudah sehat ke PC tujuan (struktur folder sama) — aplikasi langsung
+jalan tanpa akses GitHub.
+
